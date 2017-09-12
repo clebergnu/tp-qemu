@@ -56,6 +56,27 @@ def run(test, params, env):
         qemu_binary = utils_misc.get_qemu_binary(params)
         tmp = utils_misc.get_support_machine_type(qemu_binary)
         (support_machine_types, expect_system_versions) = tmp
+
+        # filter machine_types known to work - this can avoid, for isntance,
+        # q35 machine types, part of the machines automatically reported by
+        # "qemu -M ?", to be used in a i440fx only configuration
+        filter_param = params.get("traversal_machine_filter_param", "")
+        if filter_param:
+            filter_value = params.get(filter_param, "")
+            logging.info("filter_value: %s", filter_value)
+            if filter_value:
+                filtered_machine_types = []
+                filtered_expect_system_versions = []
+                for m_type, expected in zip(support_machine_types,
+                                            expect_system_versions):
+                    if filter_value.lower() in expected.lower():
+                        filtered_machine_types.append(m_type)
+                        filtered_expect_system_versions.append(expected)
+                support_machine_types = filtered_machine_types
+                expect_system_versions = filtered_expect_system_versions
+            logging.info("support_machine_types: %s", support_machine_types)
+            logging.info("expect_system_versions: %s", expect_system_versions)
+
         machine_type = params.get("machine_type", "")
         if ':' in machine_type:
             prefix = machine_type.split(':', 1)[0]

@@ -10,9 +10,9 @@ from virttest import utils_misc
 @error.context_aware
 def run(test, params, env):
     """
-    Check smbios table :
+    Check smbios table:
     1) Get the smbios table from config file,if there is no config option in
-       config file, the script will generate the config parameters automately.
+       config file, the script will generate the config parameters automatically.
     2) Boot a guest with smbios options and/or -M option
     3) Verify if bios options have been emulated correctly.
 
